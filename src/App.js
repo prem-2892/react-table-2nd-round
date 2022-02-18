@@ -1,4 +1,3 @@
-import logo from './logo.svg'
 import './App.css'
 import './main.css'
 import { useState, useEffect } from 'react'
@@ -11,9 +10,10 @@ import EditableRow from './components/EditableRow'
 
 function App() {
     const [data, setData] = useState(Data)
-    const [time, setTime] = useState('')
+    const [allData, setAllData] = useState(Data)
     const [addFormData, setAddFormData] = useState({
         startTime: '',
+        min: '',
         endTime: '',
         taskDesc: '',
     })
@@ -21,8 +21,40 @@ function App() {
     const [editFormData, setEditFormData] = useState({
         startTime: '',
         endTime: '',
+        min: '',
         taskDesc: '',
     })
+    const [totalMin, setTotalMin] = useState(0)
+    const [editError, setEditError] = useState(false)
+    const [changeData, setChangeData] = useState(undefined)
+
+    //------------------
+
+    // Data Change
+
+    const handleDateChange = (event) => {
+        event.preventDefault()
+        setData(allData)
+
+        const newDateData = allData.filter((item) => item.date === changeData)
+        console.log(newDateData)
+        setData(newDateData)
+    }
+
+    // -------------------------
+
+    useEffect(() => {
+        let tmp = 0
+        setTotalMin(0)
+        data.map((dt) => {
+            tmp = tmp + dt.min
+            // console.log('Min', dt.min)
+        })
+        setTotalMin(tmp)
+        setEditError(false)
+    }, [data])
+
+    //-------------------
 
     const handleAddFormChange = (event) => {
         event.preventDefault()
@@ -51,10 +83,28 @@ function App() {
     const handleAddFormSubmit = (event) => {
         event.preventDefault()
 
+        const h1 = addFormData.startTime.split(':')[0]
+        const m1 = addFormData.startTime.split(':')[1]
+
+        const h2 = addFormData.endTime.split(':')[0]
+        const m2 = addFormData.endTime.split(':')[1]
+
+        let hd = Math.abs(h2 - h1)
+        hd = hd * 60
+        const min = Math.abs(m1 - m2)
+        const ans = min + hd
+
+        // console.log(h1)
+        if (changeData === undefined) {
+            alert('Please Select Date to add more data')
+            return
+        }
         const newData = {
             id: nanoid(),
             startTime: addFormData.startTime,
             endTime: addFormData.endTime,
+            min: ans,
+            date: changeData,
             taskDesc: addFormData.taskDesc,
         }
 
@@ -65,15 +115,33 @@ function App() {
 
         const newDatas = [...data, newData]
         setData(newDatas)
+        setAllData(newDatas)
     }
 
     const handleEditFormSubmit = (event) => {
         event.preventDefault()
+        setEditError(true)
+
+        const h1 = editFormData.startTime.split(':')[0]
+        const m1 = editFormData.startTime.split(':')[1]
+
+        const h2 = editFormData.endTime.split(':')[0]
+        const m2 = editFormData.endTime.split(':')[1]
+
+        let hd = Math.abs(h2 - h1)
+        hd = hd * 60
+        const min = Math.abs(m1 - m2)
+
+        if (min > 0 && hd === 1) {
+            hd = 0
+        }
+        const ans = min + hd
 
         const editedData = {
             id: editDataId,
             startTime: editFormData.startTime,
             endTime: editFormData.endTime,
+            min: ans,
             taskDesc: editFormData.taskDesc,
         }
 
@@ -113,20 +181,6 @@ function App() {
         setData(newData)
     }
 
-    const calcMin = (startTime, endTime) => {
-        const h1 = startTime.split(':')[0]
-        const m1 = startTime.split(':')[1]
-
-        const h2 = endTime.split(':')[0]
-        const m2 = endTime.split(':')[1]
-
-        const hd = Math.abs(h2 - h1)
-        hd = hd * 60
-        const min = Math.abs(m1 - m2)
-        const ans = min + hd
-        return ans
-    }
-
     return (
         <div className='App'>
             <div className='first-util-row'>
@@ -134,9 +188,14 @@ function App() {
                 <input
                     type='date'
                     id='main-date'
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
+                    value={changeData}
+                    onChange={(e) => setChangeData(e.target.value)}
+                    required
                 />
+                <button type='button' onClick={(e) => handleDateChange(e)}>
+                    Load
+                </button>
+                <button>Export As PNG</button>
             </div>
             <hr />
             <form
@@ -179,6 +238,7 @@ function App() {
                         <tr>
                             <th>Start Time</th>
                             <th>End Time</th>
+                            <th>Minutes</th>
                             <th>Task Description</th>
                             <th></th>
                         </tr>
@@ -205,6 +265,19 @@ function App() {
                         ))}
                     </tbody>
                 </table>
+                <div className='total'>
+                    <div className='min'>
+                        <p className='text-min'>
+                            Day Total In Minutes: {totalMin}
+                        </p>
+                    </div>
+                    <div className='hour'>
+                        <div className='text-hour'>
+                            Day Total In Hours : {totalMin / 60}
+                        </div>
+                    </div>
+                </div>
+                <hr />
             </form>
         </div>
     )

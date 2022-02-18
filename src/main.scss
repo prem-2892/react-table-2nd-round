@@ -113,3 +113,13 @@ select {
         margin-inline: 5px;
     }
 }
+
+.total {
+    display: flex;
+    margin-left: 2em;
+    margin-top: 2em;
+
+    div {
+        margin-right: 1em;
+    }
+}

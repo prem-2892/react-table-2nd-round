@@ -5,6 +5,8 @@ const EditableRow = ({
     handleEditFormChange,
     handleCancelClick,
 }) => {
+    
+
     return (
         <tr>
             <td>
@@ -25,6 +27,7 @@ const EditableRow = ({
                     onChange={handleEditFormChange}
                 />
             </td>
+            <td></td>
             <td>
                 <input
                     type='text'

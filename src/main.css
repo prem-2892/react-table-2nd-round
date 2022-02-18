@@ -121,4 +121,16 @@ select {
 .btns-block button {
   margin-inline: 5px;
 }
+
+.total {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: 2em;
+  margin-top: 2em;
+}
+
+.total div {
+  margin-right: 1em;
+}
 /*# sourceMappingURL=main.css.map */

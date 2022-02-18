@@ -1,10 +1,13 @@
 import React from 'react'
 
 const ReadOnlyRow = ({ dt, handleEditClick, handleDeleteClick }) => {
+    
+
     return (
         <tr key={dt.id}>
             <td>{dt.startTime}</td>
             <td>{dt.endTime}</td>
+            <td>{`${dt.min} Minutes`}</td>
             <td>{dt.taskDesc}</td>
             <td>
                 <div className='btns-block'>
