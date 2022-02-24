@@ -74,6 +74,7 @@ select {
 }
 
 .main-table {
+    background-color: white;
     margin-inline: 1em;
     width: 97%;
     border-collapse: collapse;
@@ -81,6 +82,7 @@ select {
     th,
     td,
     tr {
+        background-color: white;
         border: 1px solid black;
     }
 }

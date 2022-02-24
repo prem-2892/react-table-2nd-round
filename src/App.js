@@ -8,6 +8,9 @@ import Data from './data.json'
 import ReadOnlyRow from './components/ReadOnlyRow'
 import EditableRow from './components/EditableRow'
 
+// Export
+import domtoimage from 'dom-to-image'
+
 function App() {
     const [data, setData] = useState(Data)
     const [allData, setAllData] = useState(Data)
@@ -181,6 +184,36 @@ function App() {
         setData(newData)
     }
 
+    // Exporting table -------------
+
+    function downloadURI(uri, name) {
+        var link = document.createElement('a')
+        link.download = name
+        link.href = uri
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        // delete link
+    }
+
+    const exportAsPng = (e) => {
+        e.preventDefault()
+
+        var node = document.getElementById('main-table')
+        domtoimage
+            .toPng(node)
+            .then(function (dataUrl) {
+                var img = new Image()
+                img.src = dataUrl
+                downloadURI(dataUrl, 'records.png')
+            })
+            .catch(function (error) {
+                console.error('oops, something went wrong', error)
+            })
+    }
+
+    // ------------------------------
+
     return (
         <div className='App'>
             <div className='first-util-row'>
@@ -195,7 +228,9 @@ function App() {
                 <button type='button' onClick={(e) => handleDateChange(e)}>
                     Load
                 </button>
-                <button>Export As PNG</button>
+                <button type='button' onClick={(e) => exportAsPng(e)}>
+                    Export As PNG
+                </button>
             </div>
             <hr />
             <form
@@ -233,7 +268,7 @@ function App() {
             </form>
             <hr />
             <form action='' onSubmit={(e) => handleEditFormSubmit(e)}>
-                <table className='main-table'>
+                <table className='main-table' id='main-table'>
                     <thead>
                         <tr>
                             <th>Start Time</th>
