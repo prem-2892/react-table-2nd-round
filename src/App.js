@@ -267,8 +267,13 @@ function App() {
                 </button>
             </form>
             <hr />
-            <form action='' onSubmit={(e) => handleEditFormSubmit(e)}>
-                <table className='main-table' id='main-table'>
+            <form
+                action=''
+                onSubmit={(e) => handleEditFormSubmit(e)}
+                id='main-table'
+                style={{ backgroundColor: 'white' }}
+            >
+                <table className='main-table'>
                     <thead>
                         <tr>
                             <th>Start Time</th>
