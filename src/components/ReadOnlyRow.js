@@ -1,8 +1,6 @@
 import React from 'react'
 
 const ReadOnlyRow = ({ dt, handleEditClick, handleDeleteClick }) => {
-    
-
     return (
         <tr key={dt.id}>
             <td>{dt.startTime}</td>

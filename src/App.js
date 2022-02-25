@@ -284,25 +284,21 @@ function App() {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((dt) => (
-                            <>
-                                {editDataId === dt.id ? (
-                                    <EditableRow
-                                        editFormData={editFormData}
-                                        handleEditFormChange={
-                                            handleEditFormChange
-                                        }
-                                        handleCancelClick={handleCancelClick}
-                                    />
-                                ) : (
-                                    <ReadOnlyRow
-                                        dt={dt}
-                                        handleEditClick={handleEditClick}
-                                        handleDeleteClick={handleDeleteClick}
-                                    />
-                                )}
-                            </>
-                        ))}
+                        {data.map((dt) =>
+                            editDataId === dt.id ? (
+                                <EditableRow
+                                    editFormData={editFormData}
+                                    handleEditFormChange={handleEditFormChange}
+                                    handleCancelClick={handleCancelClick}
+                                />
+                            ) : (
+                                <ReadOnlyRow
+                                    dt={dt}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )
+                        )}
                     </tbody>
                 </table>
                 <div className='total'>
