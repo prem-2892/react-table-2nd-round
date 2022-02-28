@@ -11,8 +11,12 @@ import EditableRow from './components/EditableRow'
 // Export
 import domtoimage from 'dom-to-image'
 
+// Redux
+import { useSelector, useDispatch } from 'react-redux'
+import { setDataObject } from './action/dataActions'
+
 function App() {
-    const [data, setData] = useState(Data)
+    // const [data, setData] = useState(Data)
     const [allData, setAllData] = useState(Data)
     const [addFormData, setAddFormData] = useState({
         startTime: '',
@@ -29,19 +33,29 @@ function App() {
     })
     const [totalMin, setTotalMin] = useState(0)
     const [editError, setEditError] = useState(false)
-    const [changeData, setChangeData] = useState(undefined)
+    const [changeData, setChangeData] = useState(new Date())
 
     //------------------
+
+    // ------------------------------
+    // Redux
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(setDataObject(Data))
+    }, [dispatch])
+
+    const dataReducer = useSelector((state) => state.dataReducer)
+    const { loading, data, error } = dataReducer
 
     // Data Change
 
     const handleDateChange = (event) => {
         event.preventDefault()
-        setData(allData)
 
         const newDateData = allData.filter((item) => item.date === changeData)
-        console.log(newDateData)
-        setData(newDateData)
+
+        dispatch(setDataObject(newDateData))
     }
 
     // -------------------------
@@ -49,10 +63,12 @@ function App() {
     useEffect(() => {
         let tmp = 0
         setTotalMin(0)
-        data.map((dt) => {
-            tmp = tmp + dt.min
-            // console.log('Min', dt.min)
-        })
+        if (data !== undefined) {
+            data.map((dt) => {
+                tmp = tmp + dt.min
+                // console.log('Min', dt.min)
+            })
+        }
         setTotalMin(tmp)
         setEditError(false)
     }, [data])
@@ -117,7 +133,7 @@ function App() {
         }
 
         const newDatas = [...data, newData]
-        setData(newDatas)
+        dispatch(setDataObject(newDatas))
         setAllData(newDatas)
     }
 
@@ -153,7 +169,7 @@ function App() {
         const index = data.findIndex((data) => data.id === editDataId)
 
         newData[index] = editedData
-        setData(newData)
+        dispatch(setDataObject(newData))
         setEditDataId(null)
     }
 
@@ -181,7 +197,7 @@ function App() {
 
         newData.splice(index, 1)
 
-        setData(newData)
+        dispatch(setDataObject(newData))
     }
 
     // Exporting table -------------
@@ -211,8 +227,6 @@ function App() {
                 console.error('oops, something went wrong', error)
             })
     }
-
-    // ------------------------------
 
     return (
         <div className='App'>
@@ -284,20 +298,26 @@ function App() {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((dt) =>
-                            editDataId === dt.id ? (
-                                <EditableRow
-                                    editFormData={editFormData}
-                                    handleEditFormChange={handleEditFormChange}
-                                    handleCancelClick={handleCancelClick}
-                                />
-                            ) : (
-                                <ReadOnlyRow
-                                    dt={dt}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
+                        {data !== undefined ? (
+                            data.map((dt) =>
+                                editDataId === dt.id ? (
+                                    <EditableRow
+                                        editFormData={editFormData}
+                                        handleEditFormChange={
+                                            handleEditFormChange
+                                        }
+                                        handleCancelClick={handleCancelClick}
+                                    />
+                                ) : (
+                                    <ReadOnlyRow
+                                        dt={dt}
+                                        handleEditClick={handleEditClick}
+                                        handleDeleteClick={handleDeleteClick}
+                                    />
+                                )
                             )
+                        ) : (
+                            <></>
                         )}
                     </tbody>
                 </table>
